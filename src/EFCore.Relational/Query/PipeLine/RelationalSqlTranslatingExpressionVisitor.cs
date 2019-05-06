@@ -42,6 +42,13 @@ namespace Microsoft.EntityFrameworkCore.Relational.Query.Pipeline
 
             var translation = (SqlExpression)Visit(expression);
 
+            if (translation is SqlUnaryExpression sqlUnaryExpression
+                && sqlUnaryExpression.OperatorType == ExpressionType.Convert
+                && sqlUnaryExpression.Type == typeof(object))
+            {
+                translation = sqlUnaryExpression.Operand;
+            }
+
             _selectExpression = null;
 
             translation = _sqlExpressionFactory.ApplyDefaultTypeMapping(translation);

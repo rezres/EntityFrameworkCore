@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -58,9 +57,18 @@ namespace Microsoft.EntityFrameworkCore.InMemory.Query.Pipeline
         protected override ShapedQueryExpression TranslateAverage(ShapedQueryExpression source, LambdaExpression selector, Type resultType)
             => TranslateScalarAggregate(source, selector, nameof(Enumerable.Average));
 
-        protected override ShapedQueryExpression TranslateCast(ShapedQueryExpression source, Type resultType) => throw new NotImplementedException();
+        protected override ShapedQueryExpression TranslateCast(ShapedQueryExpression source, Type resultType)
+        {
+            if (source.ShaperExpression.Type == resultType)
+            {
+                return source;
+            }
 
-        protected override ShapedQueryExpression TranslateConcat(ShapedQueryExpression source1, ShapedQueryExpression source2) => throw new NotImplementedException();
+            throw new NotImplementedException();
+        }
+
+        protected override ShapedQueryExpression TranslateConcat(ShapedQueryExpression source1, ShapedQueryExpression source2)
+            => throw new NotImplementedException();
 
         protected override ShapedQueryExpression TranslateContains(ShapedQueryExpression source, Expression item)
         {
@@ -107,7 +115,8 @@ namespace Microsoft.EntityFrameworkCore.InMemory.Query.Pipeline
             return source;
         }
 
-        protected override ShapedQueryExpression TranslateDefaultIfEmpty(ShapedQueryExpression source, Expression defaultValue) => throw new NotImplementedException();
+        protected override ShapedQueryExpression TranslateDefaultIfEmpty(ShapedQueryExpression source, Expression defaultValue)
+            => throw new NotImplementedException();
 
         protected override ShapedQueryExpression TranslateDistinct(ShapedQueryExpression source)
         {
@@ -122,11 +131,14 @@ namespace Microsoft.EntityFrameworkCore.InMemory.Query.Pipeline
             return source;
         }
 
-        protected override ShapedQueryExpression TranslateElementAtOrDefault(ShapedQueryExpression source, Expression index, bool returnDefault) => throw new NotImplementedException();
+        protected override ShapedQueryExpression TranslateElementAtOrDefault(ShapedQueryExpression source, Expression index, bool returnDefault)
+            => throw new NotImplementedException();
 
-        protected override ShapedQueryExpression TranslateExcept(ShapedQueryExpression source1, ShapedQueryExpression source2) => throw new NotImplementedException();
+        protected override ShapedQueryExpression TranslateExcept(ShapedQueryExpression source1, ShapedQueryExpression source2)
+            => throw new NotImplementedException();
 
-        protected override ShapedQueryExpression TranslateFirstOrDefault(ShapedQueryExpression source, LambdaExpression predicate, Type returnType, bool returnDefault)
+        protected override ShapedQueryExpression TranslateFirstOrDefault(
+            ShapedQueryExpression source, LambdaExpression predicate, Type returnType, bool returnDefault)
         {
             return TranslateSingleResultOperator(
                 source,
@@ -137,13 +149,27 @@ namespace Microsoft.EntityFrameworkCore.InMemory.Query.Pipeline
                     : InMemoryLinqOperatorProvider.FirstPredicate);
         }
 
-        protected override ShapedQueryExpression TranslateGroupBy(ShapedQueryExpression source, LambdaExpression keySelector, LambdaExpression elementSelector, LambdaExpression resultSelector) => throw new NotImplementedException();
+        protected override ShapedQueryExpression TranslateGroupBy(
+            ShapedQueryExpression source, LambdaExpression keySelector, LambdaExpression elementSelector, LambdaExpression resultSelector)
+            => throw new NotImplementedException();
 
-        protected override ShapedQueryExpression TranslateGroupJoin(ShapedQueryExpression outer, ShapedQueryExpression inner, LambdaExpression outerKeySelector, LambdaExpression innerKeySelector, LambdaExpression resultSelector) => throw new NotImplementedException();
+        protected override ShapedQueryExpression TranslateGroupJoin(
+            ShapedQueryExpression outer,
+            ShapedQueryExpression inner,
+            LambdaExpression outerKeySelector,
+            LambdaExpression innerKeySelector,
+            LambdaExpression resultSelector)
+            => throw new NotImplementedException();
 
-        protected override ShapedQueryExpression TranslateIntersect(ShapedQueryExpression source1, ShapedQueryExpression source2) => throw new NotImplementedException();
+        protected override ShapedQueryExpression TranslateIntersect(ShapedQueryExpression source1, ShapedQueryExpression source2)
+            => throw new NotImplementedException();
 
-        protected override ShapedQueryExpression TranslateJoin(ShapedQueryExpression outer, ShapedQueryExpression inner, LambdaExpression outerKeySelector, LambdaExpression innerKeySelector, LambdaExpression resultSelector)
+        protected override ShapedQueryExpression TranslateJoin(
+            ShapedQueryExpression outer,
+            ShapedQueryExpression inner,
+            LambdaExpression outerKeySelector,
+            LambdaExpression innerKeySelector,
+            LambdaExpression resultSelector)
         {
             outerKeySelector = TranslateLambdaExpression(outer, outerKeySelector);
             innerKeySelector = TranslateLambdaExpression(inner, innerKeySelector);
@@ -166,7 +192,8 @@ namespace Microsoft.EntityFrameworkCore.InMemory.Query.Pipeline
                 false);
         }
 
-        protected override ShapedQueryExpression TranslateLastOrDefault(ShapedQueryExpression source, LambdaExpression predicate, Type returnType, bool returnDefault)
+        protected override ShapedQueryExpression TranslateLastOrDefault(
+            ShapedQueryExpression source, LambdaExpression predicate, Type returnType, bool returnDefault)
         {
             return TranslateSingleResultOperator(
                 source,

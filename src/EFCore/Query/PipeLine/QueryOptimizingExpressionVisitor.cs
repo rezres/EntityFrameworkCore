@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Microsoft.EntityFrameworkCore.Query.NavigationExpansion;
 
 namespace Microsoft.EntityFrameworkCore.Query.Pipeline
 {
@@ -23,6 +24,8 @@ namespace Microsoft.EntityFrameworkCore.Query.Pipeline
             query = new QueryMetadataExtractingExpressionVisitor(_queryCompilationContext).Visit(query);
             query = new GroupJoinFlatteningExpressionVisitor().Visit(query);
             query = new NullCheckRemovingExpressionVisitor().Visit(query);
+            query = new NavigationExpander(_queryCompilationContext.Model).ExpandNavigations(query);
+
             return query;
         }
     }
