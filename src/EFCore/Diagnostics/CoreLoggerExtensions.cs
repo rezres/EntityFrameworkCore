@@ -953,7 +953,7 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
         public static void ShadowPropertyCreated(
-            [NotNull] this IDiagnosticsLogger<DbLoggerCategory.Model> diagnostics,
+            [NotNull] this IDiagnosticsLogger<DbLoggerCategory.Model.Validation> diagnostics,
             [NotNull] IProperty property)
         {
             var definition = CoreResources.LogShadowPropertyCreated(diagnostics);
@@ -1036,7 +1036,7 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
         public static void RedundantForeignKeyWarning(
-            [NotNull] this IDiagnosticsLogger<DbLoggerCategory.Model> diagnostics,
+            [NotNull] this IDiagnosticsLogger<DbLoggerCategory.Model.Validation> diagnostics,
             [NotNull] IForeignKey redundantForeignKey)
         {
             var definition = CoreResources.LogRedundantForeignKey(diagnostics);

@@ -74,8 +74,11 @@ namespace Microsoft.EntityFrameworkCore
         public virtual void Detects_primary_key_with_default_value()
         {
             var model = CreateConventionlessModelBuilder().Model;
+
             var entityA = model.AddEntityType(typeof(A));
             SetPrimaryKey(entityA);
+            AddProperties(entityA);
+
             entityA.FindProperty("Id").Relational().DefaultValue = 1;
 
             VerifyWarning(RelationalResources.LogKeyHasDefaultValue(new TestLogger<TestRelationalLoggingDefinitions>()).GenerateMessage("Id", "A"), model);
@@ -85,8 +88,12 @@ namespace Microsoft.EntityFrameworkCore
         public virtual void Detects_alternate_key_with_default_value()
         {
             var model = CreateConventionlessModelBuilder().Model;
+
             var entityA = model.AddEntityType(typeof(A));
             SetPrimaryKey(entityA);
+            entityA.AddProperty(nameof(A.P1), typeof(int?));
+            entityA.AddProperty(nameof(A.P2), typeof(int?));
+            entityA.AddProperty(nameof(A.P3), typeof(int?));
 
             var property = entityA.AddProperty("P0", typeof(int?));
             property.IsNullable = false;
@@ -100,10 +107,18 @@ namespace Microsoft.EntityFrameworkCore
         public virtual void Detects_duplicate_table_names_without_identifying_relationship()
         {
             var model = CreateConventionlessModelBuilder().Model;
+
             var entityA = model.AddEntityType(typeof(A));
             SetPrimaryKey(entityA);
+            AddProperties(entityA);
+
             var entityB = model.AddEntityType(typeof(B));
             SetPrimaryKey(entityB);
+            AddProperties(entityB);
+            entityB.AddIgnored(nameof(B.A));
+            entityB.AddIgnored(nameof(B.AnotherA));
+            entityB.AddIgnored(nameof(B.ManyAs));
+
             entityA.Relational().TableName = "Table";
             entityA.Relational().Schema = "Schema";
             entityB.Relational().TableName = "Table";
@@ -119,10 +134,18 @@ namespace Microsoft.EntityFrameworkCore
         public virtual void Passes_for_duplicate_table_names_in_different_schema()
         {
             var model = CreateConventionlessModelBuilder().Model;
+
             var entityA = model.AddEntityType(typeof(A));
             SetPrimaryKey(entityA);
+            AddProperties(entityA);
+
             var entityB = model.AddEntityType(typeof(B));
             SetPrimaryKey(entityB);
+            AddProperties(entityB);
+            entityB.AddIgnored(nameof(B.A));
+            entityB.AddIgnored(nameof(B.AnotherA));
+            entityB.AddIgnored(nameof(B.ManyAs));
+
             entityA.Relational().TableName = "Table";
             entityA.Relational().Schema = "SchemaA";
             entityB.Relational().TableName = "Table";
@@ -135,8 +158,11 @@ namespace Microsoft.EntityFrameworkCore
         public virtual void Passes_for_duplicate_table_names_for_inherited_entities()
         {
             var model = CreateConventionlessModelBuilder().Model;
+
             var entityA = model.AddEntityType(typeof(A));
             SetPrimaryKey(entityA);
+            AddProperties(entityA);
+
             var entityC = model.AddEntityType(typeof(C));
             SetBaseType(entityC, entityA);
 
@@ -959,8 +985,10 @@ namespace Microsoft.EntityFrameworkCore
         public virtual void Passes_for_non_hierarchical_model()
         {
             var model = CreateConventionlessModelBuilder().Model;
+
             var entityA = model.AddEntityType(typeof(A));
             SetPrimaryKey(entityA);
+            AddProperties(entityA);
 
             Validate(model);
         }
@@ -969,8 +997,11 @@ namespace Microsoft.EntityFrameworkCore
         public virtual void Detects_missing_discriminator_property()
         {
             var model = CreateConventionlessModelBuilder().Model;
+
             var entityA = model.AddEntityType(typeof(A));
             SetPrimaryKey(entityA);
+            AddProperties(entityA);
+
             var entityC = model.AddEntityType(typeof(C));
             entityC.BaseType = entityA;
 
@@ -981,8 +1012,11 @@ namespace Microsoft.EntityFrameworkCore
         public virtual void Detects_missing_discriminator_value_on_base()
         {
             var model = CreateConventionlessModelBuilder().Model;
+
             var entityA = model.AddEntityType(typeof(A));
             SetPrimaryKey(entityA);
+            AddProperties(entityA);
+
             var entityC = model.AddEntityType(typeof(C));
             SetBaseType(entityC, entityA);
 
@@ -996,8 +1030,11 @@ namespace Microsoft.EntityFrameworkCore
         public virtual void Detects_missing_discriminator_value_on_leaf()
         {
             var model = CreateConventionlessModelBuilder().Model;
+
             var entityAbstract = model.AddEntityType(typeof(Abstract));
             SetPrimaryKey(entityAbstract);
+            AddProperties(entityAbstract);
+
             var entityGeneric = model.AddEntityType(typeof(Generic<string>));
             SetBaseType(entityGeneric, entityAbstract);
 
